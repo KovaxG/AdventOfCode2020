@@ -13,6 +13,7 @@ generateAOCStructure = do
   Foldable.traverse_ mkDayFolder [1 .. 25]
   putStrLn "Done."
 
+-- TODO single digit folders should have a leading 0 otherwise it's messed up
 mkDayFolder :: Int -> IO ()
 mkDayFolder nr = do
   let dirName = show nr
