@@ -11,9 +11,17 @@ import           Data.Set (Set)
 import qualified Data.Set as Set
 
 main :: IO ()
-main = Util.runProcess $ \input ->
-  let code = Map.fromList $ zip [1..] $ Maybe.catMaybes $ map readInstr $ lines input
-  in show $ filter (\(_, _, b) -> b) $ problem code
+main = Util.runProcess $
+  show
+  . head
+  . map (\(acc, _, _) -> acc)
+  . filter (\(_, _, b) -> b)
+  . problem
+  . Map.fromList
+  . zip [1..]
+  . Maybe.catMaybes
+  . map readInstr
+  . lines
 
 problem :: Map Int Instr -> [State]
 problem code = go code <$> [1 .. Map.size code]
