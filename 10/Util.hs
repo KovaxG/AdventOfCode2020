@@ -40,7 +40,7 @@ xor a b = (a && not b) || (not a && b)
 mapIf :: (a -> Bool) -> (a -> a) -> [a] -> [a]
 mapIf p f = map (\a -> if p a then f a else a)
 
-split :: Char -> String -> [String]
+split :: Eq a => a -> [a] -> [[a]]
 split c s =
   case rest of
     []     -> [chunk]

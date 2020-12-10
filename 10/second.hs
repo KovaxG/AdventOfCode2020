@@ -6,7 +6,16 @@ import qualified Data.List as List
 
 main :: IO ()
 main = Util.runProcessInts $ \adapters ->
-  show $ product $ map (formula . length) $ List.sort $ Util.split '3' $ (=<<) show $ map diff $ Util.sliding 1 2 $ List.sort $ maximum adapters + 3 : 0 : adapters
+  show
+  $ product
+  $ map (formula . length)
+  $ Util.split 3
+  $ map diff
+  $ Util.sliding 1 2
+  $ List.sort
+  $ (:) (maximum adapters + 3)
+  $ (:) 0
+  $ adapters
 
 diff :: [Int] -> Int
 diff [a, b] = b - a
