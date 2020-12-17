@@ -21,7 +21,7 @@ getPassports =
   map (Map.fromList . map toTuple . words)
   . Util.split '|'
   .  unwords
-  . Util.mapIf (=="") (\_ -> "|")
+  . Util.mapIf (=="") (const "|")
   . lines
 
 toTuple :: String -> (String, String)
@@ -85,7 +85,7 @@ validateHCL pass = do
   field <- Map.lookup "hcl" pass
   firstChar <- Util.safeHead field
   rest <- Util.safeTail field
-  if firstChar == '#' && all (\c -> elem c "1234567890abcdef") rest && length rest == 6
+  if firstChar == '#' && all (`elem` "1234567890abcdef") rest && length rest == 6
   then return pass
   else fail "Bad Hair Color!"
 
@@ -93,7 +93,7 @@ validateHCL pass = do
 validateECL :: Passport -> Maybe Passport
 validateECL pass = do
   field <- Map.lookup "ecl" pass
-  if elem field ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
+  if field `elem` ["amb", "blu", "brn", "gry", "grn", "hzl", "oth"]
   then return pass
   else fail "Bad Eye Color!"
 

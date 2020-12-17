@@ -7,14 +7,14 @@ import qualified Data.Map as Map
 import qualified Data.Maybe as Maybe
 
 main :: IO ()
-main = Util.runProcess $ \i -> show $ Util.count id $ map isValid $ getPassports i
+main = Util.runProcess $ show . Util.count id . map isValid . getPassports
 
 getPassports :: String -> [Map String String]
 getPassports =
   map (Map.fromList . map toTuple . words)
   . Util.split '|'
   .  unwords
-  . Util.mapIf (=="") (\_ -> "|")
+  . Util.mapIf (=="") (const "|")
   . lines
 
 toTuple :: String -> (String, String)
@@ -22,6 +22,5 @@ toTuple s = (take 3 s, drop 4 s)
 
 isValid :: Map String String -> Bool
 isValid pass =
-    all id
-    $  map (\k -> Maybe.isJust $ Map.lookup k pass)
-    $ ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]
+    all (\k -> Maybe.isJust $ Map.lookup k pass)
+        ["byr", "iyr", "eyr", "hgt", "hcl", "ecl", "pid"]

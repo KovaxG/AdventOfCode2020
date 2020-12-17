@@ -1,4 +1,6 @@
+{-# LANGUAGE TupleSections #-}
 module Util where
+
 
 import qualified Data.Maybe as Maybe
 import           Data.Map (Map)
@@ -24,25 +26,22 @@ runProcessMap parse process =
         toCoord :: Int -> Coord
         toCoord x = (mod x width, div x height)
 
-        stuff = Map.map parse $ Map.fromList $ concatMap (\(y, r) -> zip (map (\x -> (x,y)) [0..]) r) $ zip [0..] $ lines input
+        stuff = Map.map parse $ Map.fromList $ concatMap (\(y, r) -> zip (map (,y) [0..]) r) $ zip [0..] $ lines input
     in (stuff, width, height)
-  where
 
 showMap :: Show a => (Map Coord a, Int, Int) -> String
 showMap (tiles, width, height) =
   unlines
   $ chunks width
-  $ concat
-  $ map snd
+  $ concatMap snd
   $ List.sortBy (on compare fst)
   $ map (Bifunctor.bimap toIndex show)
-  $ Map.toList
-  $ tiles
+  $ Map.toList tiles
   where
     toIndex (x,y) = x + width * y
 
 readIntsIgnoreBad :: String -> [Int]
-readIntsIgnoreBad = Maybe.catMaybes . map safeRead . lines
+readIntsIgnoreBad = Maybe.mapMaybe safeRead . lines
 
 safeRead :: Read a => String -> Maybe a
 safeRead = fmap fst . safeHead . reads

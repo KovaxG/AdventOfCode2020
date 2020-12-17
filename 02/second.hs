@@ -6,7 +6,7 @@ import qualified Data.Maybe as Maybe
 import qualified Text.Parsec as Parsec
 
 main :: IO ()
-main = Util.runProcess $ show . Util.count isCorrect . Maybe.catMaybes . map parseLine . lines
+main = Util.runProcess $ show . Util.count isCorrect . Maybe.mapMaybe parseLine . lines
 
 data Line = Line Int Int Char String deriving (Show)
 

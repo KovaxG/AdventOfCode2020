@@ -1,6 +1,8 @@
 -- Advent of Code 2020 Day 3 Part 2 by KovaxG
 -- https://adventofcode.com/2020/day/3
 
+{-# LANGUAGE TupleSections #-}
+
 import qualified Util
 import           Data.Map (Map)
 import qualified Data.Map as Map
@@ -27,7 +29,7 @@ populate s = Area (Map.fromList indexedSquares) width height
     squares = map (map toSquare) rows
 
     indexedSquares :: [(Coord, Square)]
-    indexedSquares = concatMap (\(y, r) -> zip (map (\x -> (x,y)) [0..]) r)
+    indexedSquares = concatMap (\(y, r) -> zip (map ( ,y) [0..]) r)
                    $ zip [0..] squares
 
     toSquare :: Char -> Square
@@ -42,6 +44,6 @@ countTrees :: Area -> (Int, Int) -> Int
 countTrees area (xOff, yOff) =
   Util.count (==Tree)
   $ Maybe.catMaybes
-  $ takeWhile (Maybe.isJust)
+  $ takeWhile Maybe.isJust
   $ map (getSquare area)
   $ iterate (\(x,y) -> (x + xOff, y + yOff)) (0,0)

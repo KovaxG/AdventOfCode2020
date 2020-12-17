@@ -7,7 +7,7 @@ import qualified Data.List as List
 main :: IO ()
 main = Util.runProcess $ \input ->
   let ids = List.sort $ map scanID $ lines input
-  in show $ snd $ head $ dropWhile (\(a, b) -> a == b) $ zip ids [head ids ..]
+  in show $ snd $ head $ dropWhile (uncurry (==)) $ zip ids [head ids ..]
 
 scanID :: String -> Int
 scanID s = row * 8 + col
