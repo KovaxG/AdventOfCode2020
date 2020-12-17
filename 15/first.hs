@@ -23,14 +23,14 @@ tick s@State{past, prevNr, index} =
     }
   where
     newIndex = index + 1
-    newNr = maybe 0 (\old -> index - old)
+    newNr = maybe 0 (index -)
            $ Map.lookup prevNr past
 
 initState :: [Nr] -> State
 initState (x:xs) = State { past = Map.fromList $ zip (reverse xs) [1 ..], index = 1 + length xs, prevNr = x }
 
 main :: IO ()
-main = putStrLn $ show $ calculate [5,1,9,18,13,8,0]
+main = print $ calculate [5,1,9,18,13,8,0]
 
 calculate :: [Nr] -> Nr
 calculate xs = last . map prevNr . take (2020 - length xs + 1) . iterate tick . initState . reverse $ xs

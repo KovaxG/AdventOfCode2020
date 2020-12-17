@@ -4,8 +4,10 @@
 {-# LANGUAGE NamedFieldPuns #-}
 {-# LANGUAGE BangPatterns #-}
 
-import           Data.Map (Map)
-import qualified Data.Map as Map
+import           Data.Map.Strict (Map)
+import qualified Data.Map.Strict as Map
+import qualified Data.List as List
+import qualified Debug.Trace as Debug
 
 type Nr = Int
 type Index = Int
@@ -24,19 +26,18 @@ tick s@State{past, prevNr, index} =
     }
   where
     newIndex = index + 1
-    newNr = maybe 0 (\old -> index - old)
-           $ Map.lookup prevNr past
+    newNr = maybe 0 (index -) $ Map.lookup prevNr past
 
 initState :: [Nr] -> State
 initState (x:xs) = State { past = Map.fromList $ zip (reverse xs) [1 ..], index = 1 + length xs, prevNr = x }
 
 main :: IO ()
-main = putStrLn $ show $ calculate [5,1,9,18,13,8,0]
+main = print $ calculate [0,3,6] 30000000
 
-calculate :: [Nr] -> Nr
-calculate xs = prevNr . go . initState . reverse $ xs
+calculate :: [Nr] -> Int -> Nr
+calculate !xs !num = prevNr . go . initState . reverse $ xs
   where
     go :: State -> State
-    go !s@State{index}
-      | index == 30000000 = s
-      | otherwise = go (tick s)
+    go s@State{index}
+      | index == num = s
+      | otherwise = Debug.traceShow (length $ past s) $ go (tick s)
